@@ -1,20 +1,22 @@
-// 获取响应体字符串
+// 调试模式脚本
 let body = $response.body;
 
-// 1. 定义要查找的目标文字 (正则全局匹配)
-// 如果以后还有其他表情想换，可以在这里加，比如 /\[惊喜\]|\[大笑\]/g
-const targetText = /\[惊喜\]/g;
+console.log("🚫 知乎脚本触发！正在检查内容...");
 
-// 2. 定义替换后的图片 HTML
-// 宽度设为 22px 比较接近原生表情大小，vertical-align 保证和文字对齐
-const newImage = '<img src="https://pic2.zhimg.com/v2-3846906ea3ded1fabbf1a98c891527fb.png" style="width: 22px; vertical-align: middle; display: inline-block;">';
-
-// 3. 执行替换
-// 只有当响应体里确实包含“[惊喜]”时才运行替换逻辑，减少性能消耗
-if (body && body.indexOf("[惊喜]") !== -1) {
-    body = body.replace(targetText, newImage);
-    $done({ body });
+// 1. 暴力测试：把所有“的”字改成“❌”
+// 如果这步生效了，说明脚本没问题，是知乎不认 HTML 图片代码。
+// 如果这步没生效，说明脚本根本没跑，或者数据是加密的。
+if (body) {
+    let newBody = body.replace(/的/g, "❌");
+    
+    if (newBody !== body) {
+        console.log("✅ 替换成功！修改了正文内容。");
+        $done({ body: newBody });
+    } else {
+        console.log("⚠️ 没找到目标文字，可能是数据加密或格式不对。");
+        $done({});
+    }
 } else {
-    // 如果没找到，直接结束，不修改任何数据
+    console.log("❌ 响应体为空！");
     $done({});
 }
