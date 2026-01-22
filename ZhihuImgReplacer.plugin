@@ -1,22 +1,26 @@
-#!name=知乎图片替换修复 (全能版)
-#!desc=强制替换知乎App和网页端的特定图片，内置QUIC阻断和全域名解密
+#!name=知乎图片与表情全能替换
+#!desc=同时修复评论区旧图(Rewrite)和正文文本表情(Script)，内置QUIC阻断
 #!author=CookieYEU
 #!homepage=https://github.com/CookieYEU/Loon-Configs
 #!icon=https://static.zhihu.com/heifetz/favicon.ico
-#!date=2026-01-22 14:00:00
+#!date=2026-01-22 15:30:00
 
 [Rule]
-# 【关键】无需手动找开关，直接用规则阻断 UDP 443 (QUIC)
-# 这会强迫知乎 App 使用 TCP 协议，从而让 Loon 能抓到并替换图片
+# 1. 强制阻断 QUIC，确保能抓包
 AND,((PROTOCOL,UDP),(DEST-PORT,443)),REJECT
 
 [Rewrite]
-# 匹配逻辑：
-# 1. 允许 pic1, pic2, pic3, pic4 等所有服务器
-# 2. 忽略 .png / .webp / _720w 等后缀差异
-# 3. 302 重定向到新图
-^https:\/\/pic\w*\.zhimg\.com\/.*5c9b7521eb16507c9d2f747f3a32a813.* https://pic2.zhimg.com/v2-3846906ea3ded1fabbf1a98c891527fb.png 302
+# 2. 【评论区模式】拦截图片链接
+# 匹配旧 ID (包括之前找到的那个小图标 ID)，重定向到新图
+^https:\/\/pic\w*\.zhimg\.com\/.*(5c9b7521eb16507c9d2f747f3a32a813|ac55face7ea1f731a13740c50c6158dc).* https://pic2.zhimg.com/v2-3846906ea3ded1fabbf1a98c891527fb.png 302
+
+[Script]
+# 3. 【正文模式】拦截文字内容
+# 针对知乎的问答和文章接口，注入 JS 修改文字
+# ⚠️请务必检查下面的 script-path 是否是你自己的 GitHub Raw 链接
+http-response ^https?:\/\/api\.zhihu\.com\/(questions|articles|answers)\/.* script-path=https://raw.githubusercontent.com/CookieYEU/Loon-Configs/main/ZhihuArticleReplacer.js, requires-body=true, tag=知乎正文表情替换
 
 [MITM]
-# 扩大解密范围，防止漏网之鱼
-hostname = *.zhimg.com
+# 4. 解密范围
+# 包含图片域名(*.zhimg.com) 和 API域名(api.zhihu.com)
+hostname = *.zhimg.com, api.zhihu.com
