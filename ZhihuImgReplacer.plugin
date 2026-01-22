@@ -1,0 +1,13 @@
+#!name=知乎图片替换修复
+#!desc=修复/替换知乎特定的旧图片资源链接
+#!author=CookieYEU
+#!homepage=https://github.com/CookieYEU/Loon-Configs
+#!icon=https://static.zhihu.com/heifetz/favicon.ico
+#!date=2026-01-22 10:00:00
+
+[Rewrite]
+# 匹配旧图 URL -> 302 重定向到新图 URL
+^https:\/\/pic1\.zhimg\.com\/v2-5c9b7521eb16507c9d2f747f3a32a813\.png https://pic2.zhimg.com/v2-3846906ea3ded1fabbf1a98c891527fb.png 302
+
+[MITM]
+hostname = pic1.zhimg.com
