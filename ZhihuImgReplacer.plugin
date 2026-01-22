@@ -1,13 +1,17 @@
-#!name=知乎图片替换修复
-#!desc=修复/替换知乎特定的旧图片资源链接
+#!name=知乎图片替换修复 (终极版)
+#!desc=强制替换知乎App和网页端的特定图片，包含反QUIC和全域名解密
 #!author=CookieYEU
 #!homepage=https://github.com/CookieYEU/Loon-Configs
 #!icon=https://static.zhihu.com/heifetz/favicon.ico
-#!date=2026-01-22 22:39:00
+#!date=2026-01-22 12:00:00
 
 [Rewrite]
-# 匹配旧图 ID，不管后缀是 png/webp 还是 _r/_b，统统拦截
-^https:\/\/pic1\.zhimg\.com\/v2-5c9b7521eb16507c9d2f747f3a32a813.* https://pic2.zhimg.com/v2-3846906ea3ded1fabbf1a98c891527fb.png 302
+# 匹配逻辑升级：
+# 1. 允许域名漂移 (pic1, pic2, pic3, pic4...)
+# 2. 忽略后缀差异 (png, webp, jpg)
+# 3. 忽略分辨率后缀 (_r, _b, _720w)
+^https:\/\/pic\w*\.zhimg\.com\/.*5c9b7521eb16507c9d2f747f3a32a813.* https://pic2.zhimg.com/v2-3846906ea3ded1fabbf1a98c891527fb.png 302
 
 [MITM]
-hostname = pic1.zhimg.com
+# 扩大攻击范围，防止App跳去 pic3.zhimg.com 下载
+hostname = *.zhimg.com
