@@ -3,7 +3,7 @@
 #!author=CookieYEU
 #!homepage=https://github.com/CookieYEU/Loon-Configs
 #!icon=https://static.zhihu.com/heifetz/favicon.ico
-#!date=2026-01-22 10:00:00
+#!date=2026-01-22 22:39:00
 
 [Rewrite]
 # 匹配旧图 ID，不管后缀是 png/webp 还是 _r/_b，统统拦截
