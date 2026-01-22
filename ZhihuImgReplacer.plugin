@@ -3,22 +3,21 @@
 #!author=CookieYEU
 #!homepage=https://github.com/CookieYEU/Zhihu-Image-URL-Replacer
 #!icon=https://static.zhihu.com/heifetz/favicon.ico
-#!date=2026-01-22 16:00:00
+#!date=2026-01-22 16:30:00
 
 [Rule]
-# 【关键】强制阻断 UDP 443 (QUIC)，迫使知乎走 TCP，否则无法抓包和替换
+# 【关键】强制阻断 UDP 443 (QUIC)，迫使知乎走 TCP
 AND,((PROTOCOL,UDP),(DEST-PORT,443)),REJECT
 
 [Rewrite]
 # 【评论区/图片模式】
-# 匹配旧图 ID (这里保留了原版ID和你之前截图里出现的那个 ac55... ID)
-# 如果你后来抓到了那个 1KB 小图标的真实 ID，请手动加到括号里，用 | 分隔
+# 匹配旧图 ID
 ^https:\/\/pic\w*\.zhimg\.com\/.*(5c9b7521eb16507c9d2f747f3a32a813|ac55face7ea1f731a13740c50c6158dc).* https://pic2.zhimg.com/v2-3846906ea3ded1fabbf1a98c891527fb.png 302
 
 [Script]
 # 【正文模式】
 # 针对知乎的问题(questions)、文章(articles)、回答(answers) API 接口
-# 使用 script-path 调用你仓库里的 JS 文件进行文字替换
+# 👇 这里已经换成了你真实的正确链接
 http-response ^https?:\/\/api\.zhihu\.com\/(questions|articles|answers|moments)\/.* script-path=https://raw.githubusercontent.com/CookieYEU/Zhihu-Image-URL-Replacer/refs/heads/main/ZhihuArticleReplacer.js, requires-body=true, tag=知乎正文表情替换
 
 [MITM]
