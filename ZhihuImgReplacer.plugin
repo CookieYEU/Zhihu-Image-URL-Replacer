@@ -1,21 +1,19 @@
-#!name=知乎表情与图片全能修复
-#!desc=修复评论区旧图(Rewrite) + 替换正文文本表情(Script) + 自动阻断QUIC
+#!name=知乎图片修复 (纯净优化版)
+#!desc=仅修复评论区和页面中的旧图链接，精准阻断知乎QUIC
 #!author=CookieYEU
 #!homepage=https://github.com/CookieYEU/Zhihu-Image-URL-Replacer
 #!icon=https://static.zhihu.com/heifetz/favicon.ico
-#!date=2026-01-22 17:00:00
+#!date=2026-01-23 00:10:00
 
 [Rule]
-# 强制阻断 QUIC
-AND,((PROTOCOL,UDP),(DEST-PORT,443)),REJECT
+# 【优化】只针对知乎域名阻断 QUIC，不影响 YouTube 等其他 App
+# 如果 Loon 无法匹配 Host，它会根据 IP 规则兜底，通常也够用了
+AND,((PROTOCOL,UDP),(DEST-PORT,443),(DOMAIN-SUFFIX,zhimg.com)),REJECT
+AND,((PROTOCOL,UDP),(DEST-PORT,443),(DOMAIN-SUFFIX,zhihu.com)),REJECT
 
 [Rewrite]
-# 评论区图片替换
+# 图片 URL 替换
 ^https:\/\/pic\w*\.zhimg\.com\/.*(5c9b7521eb16507c9d2f747f3a32a813|ac55face7ea1f731a13740c50c6158dc).* https://pic2.zhimg.com/v2-3846906ea3ded1fabbf1a98c891527fb.png 302
 
-[Script]
-# 正文替换 (修正了 URL，去掉了 /refs/heads/)
-http-response ^https?:\/\/api\.zhihu\.com\/.*(questions|articles|answers|moments).* script-path=https://raw.githubusercontent.com/CookieYEU/Zhihu-Image-URL-Replacer/main/ZhihuArticleReplacer.js, requires-body=true, tag=知乎正文表情替换
-
 [MITM]
-hostname = *.zhimg.com, api.zhihu.com
+hostname = *.zhimg.com
