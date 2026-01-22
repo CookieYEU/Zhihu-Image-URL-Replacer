@@ -1,26 +1,26 @@
-#!name=知乎图片与表情全能替换
-#!desc=同时修复评论区旧图(Rewrite)和正文文本表情(Script)，内置QUIC阻断
+#!name=知乎表情与图片全能修复
+#!desc=修复评论区旧图(Rewrite) + 替换正文文本表情(Script) + 自动阻断QUIC
 #!author=CookieYEU
-#!homepage=https://github.com/CookieYEU/Loon-Configs
+#!homepage=https://github.com/CookieYEU/Zhihu-Image-URL-Replacer
 #!icon=https://static.zhihu.com/heifetz/favicon.ico
-#!date=2026-01-22 15:30:00
+#!date=2026-01-22 16:00:00
 
 [Rule]
-# 1. 强制阻断 QUIC，确保能抓包
+# 【关键】强制阻断 UDP 443 (QUIC)，迫使知乎走 TCP，否则无法抓包和替换
 AND,((PROTOCOL,UDP),(DEST-PORT,443)),REJECT
 
 [Rewrite]
-# 2. 【评论区模式】拦截图片链接
-# 匹配旧 ID (包括之前找到的那个小图标 ID)，重定向到新图
+# 【评论区/图片模式】
+# 匹配旧图 ID (这里保留了原版ID和你之前截图里出现的那个 ac55... ID)
+# 如果你后来抓到了那个 1KB 小图标的真实 ID，请手动加到括号里，用 | 分隔
 ^https:\/\/pic\w*\.zhimg\.com\/.*(5c9b7521eb16507c9d2f747f3a32a813|ac55face7ea1f731a13740c50c6158dc).* https://pic2.zhimg.com/v2-3846906ea3ded1fabbf1a98c891527fb.png 302
 
 [Script]
-# 3. 【正文模式】拦截文字内容
-# 针对知乎的问答和文章接口，注入 JS 修改文字
-# ⚠️请务必检查下面的 script-path 是否是你自己的 GitHub Raw 链接
-http-response ^https?:\/\/api\.zhihu\.com\/(questions|articles|answers)\/.* script-path=https://raw.githubusercontent.com/CookieYEU/Loon-Configs/main/ZhihuArticleReplacer.js, requires-body=true, tag=知乎正文表情替换
+# 【正文模式】
+# 针对知乎的问题(questions)、文章(articles)、回答(answers) API 接口
+# 使用 script-path 调用你仓库里的 JS 文件进行文字替换
+http-response ^https?:\/\/api\.zhihu\.com\/(questions|articles|answers|moments)\/.* script-path=https://raw.githubusercontent.com/CookieYEU/Zhihu-Image-URL-Replacer/refs/heads/main/ZhihuArticleReplacer.js, requires-body=true, tag=知乎正文表情替换
 
 [MITM]
-# 4. 解密范围
-# 包含图片域名(*.zhimg.com) 和 API域名(api.zhihu.com)
+# 开启解密范围
 hostname = *.zhimg.com, api.zhihu.com
