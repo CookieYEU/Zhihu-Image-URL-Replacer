@@ -1,15 +1,18 @@
-#!name=知乎图片修复 (纯净优化版)
-#!desc=仅修复评论区和页面中的旧图链接，精准阻断知乎QUIC
+#!name=知乎图片修复 (国界线阻断版)
+#!desc=修复评论区旧图，仅阻断国内App的QUIC(保留油管/Google速度)
 #!author=CookieYEU
 #!homepage=https://github.com/CookieYEU/Zhihu-Image-URL-Replacer
 #!icon=https://static.zhihu.com/heifetz/favicon.ico
-#!date=2026-01-23 00:10:00
+#!date=2026-01-22 20:00:00
 
 [Rule]
-# 【优化】只针对知乎域名阻断 QUIC，不影响 YouTube 等其他 App
-# 如果 Loon 无法匹配 Host，它会根据 IP 规则兜底，通常也够用了
+# 【核心策略】双重锁死，但放过国外流量
+# 1. 如果能识别出是知乎域名，直接拦截 (针对部分泄露的DNS)
 AND,((PROTOCOL,UDP),(DEST-PORT,443),(DOMAIN-SUFFIX,zhimg.com)),REJECT
-AND,((PROTOCOL,UDP),(DEST-PORT,443),(DOMAIN-SUFFIX,zhihu.com)),REJECT
+
+# 2. 【大招】如果识别不出域名，但发现 IP 是国内的(CN)，也拦截
+# 这样能按住知乎，但不会误伤 YouTube/Netflix 等国外 App
+AND,((PROTOCOL,UDP),(DEST-PORT,443),(GEOIP,CN)),REJECT
 
 [Rewrite]
 # 图片 URL 替换
