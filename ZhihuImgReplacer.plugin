@@ -3,23 +3,19 @@
 #!author=CookieYEU
 #!homepage=https://github.com/CookieYEU/Zhihu-Image-URL-Replacer
 #!icon=https://static.zhihu.com/heifetz/favicon.ico
-#!date=2026-01-22 16:30:00
+#!date=2026-01-22 17:00:00
 
 [Rule]
-# 【关键】强制阻断 UDP 443 (QUIC)，迫使知乎走 TCP
+# 强制阻断 QUIC
 AND,((PROTOCOL,UDP),(DEST-PORT,443)),REJECT
 
 [Rewrite]
-# 【评论区/图片模式】
-# 匹配旧图 ID
+# 评论区图片替换
 ^https:\/\/pic\w*\.zhimg\.com\/.*(5c9b7521eb16507c9d2f747f3a32a813|ac55face7ea1f731a13740c50c6158dc).* https://pic2.zhimg.com/v2-3846906ea3ded1fabbf1a98c891527fb.png 302
 
 [Script]
-# 【正文模式】
-# 针对知乎的问题(questions)、文章(articles)、回答(answers) API 接口
-# 👇 这里已经换成了你真实的正确链接# 修改了正则：在 .com/ 后面加了 .* 允许中间夹带任何版本号
-http-response ^https?:\/\/api\.zhihu\.com\/.*(questions|articles|answers|moments).* script-path=https://raw.githubusercontent.com/CookieYEU/Zhihu-Image-URL-Replacer/refs/heads/main/ZhihuArticleReplacer.js, requires-body=true, tag=知乎正文表情替换
+# 正文替换 (修正了 URL，去掉了 /refs/heads/)
+http-response ^https?:\/\/api\.zhihu\.com\/.*(questions|articles|answers|moments).* script-path=https://raw.githubusercontent.com/CookieYEU/Zhihu-Image-URL-Replacer/main/ZhihuArticleReplacer.js, requires-body=true, tag=知乎正文表情替换
 
 [MITM]
-# 开启解密范围
 hostname = *.zhimg.com, api.zhihu.com
