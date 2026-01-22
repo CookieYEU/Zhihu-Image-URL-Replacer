@@ -6,8 +6,8 @@
 #!date=2026-01-22 10:00:00
 
 [Rewrite]
-# 匹配旧图 URL -> 302 重定向到新图 URL
-^https:\/\/pic1\.zhimg\.com\/v2-5c9b7521eb16507c9d2f747f3a32a813\.png https://pic2.zhimg.com/v2-3846906ea3ded1fabbf1a98c891527fb.png 302
+# 匹配旧图 ID，不管后缀是 png/webp 还是 _r/_b，统统拦截
+^https:\/\/pic1\.zhimg\.com\/v2-5c9b7521eb16507c9d2f747f3a32a813.* https://pic2.zhimg.com/v2-3846906ea3ded1fabbf1a98c891527fb.png 302
 
 [MITM]
 hostname = pic1.zhimg.com
