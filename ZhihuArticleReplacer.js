@@ -1,22 +1,20 @@
-// 获取响应体
+// 获取响应体字符串
 let body = $response.body;
 
-// 定义要查找的文字 (正则匹配 [惊喜])
-// 注意：如果还有其他表情想换，可以继续加
+// 1. 定义要查找的目标文字 (正则全局匹配)
+// 如果以后还有其他表情想换，可以在这里加，比如 /\[惊喜\]|\[大笑\]/g
 const targetText = /\[惊喜\]/g;
 
-// 定义要替换成的图片 HTML 代码
-// 这里用了你之前指定的那张图，设置宽度为 20px 以匹配文字大小
+// 2. 定义替换后的图片 HTML
+// 宽度设为 22px 比较接近原生表情大小，vertical-align 保证和文字对齐
 const newImage = '<img src="https://pic2.zhimg.com/v2-3846906ea3ded1fabbf1a98c891527fb.png" style="width: 22px; vertical-align: middle; display: inline-block;">';
 
-// 开始替换
-// 只有当正文里真的包含“[惊喜]”时才执行替换，节省性能
-if (body.indexOf("[惊喜]") !== -1) {
-    // 替换文字为图片标签
+// 3. 执行替换
+// 只有当响应体里确实包含“[惊喜]”时才运行替换逻辑，减少性能消耗
+if (body && body.indexOf("[惊喜]") !== -1) {
     body = body.replace(targetText, newImage);
-    // 结束并返回修改后的数据
     $done({ body });
 } else {
-    // 没找到就原样返回，不修改
+    // 如果没找到，直接结束，不修改任何数据
     $done({});
 }
